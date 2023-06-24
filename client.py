@@ -74,7 +74,5 @@ def SendVideo():
 
         print('process time = ',time.time() - t1)
     sock.close()
-
-
 if __name__ == "__main__":
     SendVideo()

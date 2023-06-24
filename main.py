@@ -14,6 +14,10 @@ from Ui_server import Ui_Form
 from qframelesswindow import FramelessWindow
 from qfluentwidgets import setThemeColor, Theme
 from ThreadCapture import ThreadCapture
+
+
+import requests
+
 class MainWindow(FramelessWindow, Ui_Form):
     def __init__(self):
         super().__init__()
@@ -33,78 +37,36 @@ class MainWindow(FramelessWindow, Ui_Form):
         self.openThreadText = "Select Camera"
         self.closeThreadText = "Close Thread"
         self.PushButton.setText(self.openThreadText)
+    
+    
+    def submit_Post(self):
+        url = "http://10.105.114.11:25000/export"  # 应用程序的 URL
         
+        response = requests.post(url)  # 发送 POST 请求
+
+        if response.status_code == 200:
+            print("Send Post Success!")
+        else:
+            print("Request failed with status code:", response.status_code)
+    
     def actionPushButton(self):
         if self.PushButton.text() == self.openThreadText:
+            self.submit_Post()
             # 创建线程
             self.threadCapture = ThreadCapture()
+            self.threadCapture.Threadopen = True
             self.threadCapture.signal_image.connect(self.showImage)
             self.threadCapture.start()
             self.PushButton.setText(self.closeThreadText)
         else:
+            self.threadCapture.closeThread()
             self.threadCapture.terminate()
             self.threadCapture.quit()
             self.PushButton.setText(self.openThreadText)
         
     def showImage(self, image):
         self.imageScene.addPixmap(image)
-        self.imageScene
     
-    # @staticmethod
-    # def recv_all(sock, count):
-    #     buf = b''
-    #     while count:
-    #         newbuf = sock.recv(count)
-    #         if not newbuf: return None
-    #         buf += newbuf
-    #         count -= len(newbuf)
-    #     return buf
-    # def deal_data(self, conn, addr):
-    #     print("Accept new connection from {0}".format(addr))
-    #     while True:
-    #         buf = conn.recv(struct.calcsize('qq'))
-    #         print(buf, type(buf))
-    #         data_len, idx = struct.unpack('qq', buf)
-    #         print(f"data_len = {data_len}, idx = {idx}")
-    #         print(type(data_len), type(idx))
-    #         stringData = MainWindow.recv_all(conn, data_len)
-    #         # stringData = conn.recv(data_len)
-    #         # print(stringData)
-    #         data = numpy.frombuffer(stringData, dtype='uint8')
-    #         tmp = cv2.imdecode(data, cv2.IMREAD_COLOR)  # 解码处理，返回mat图片
-    #         img = cv2.resize(tmp, (1280, 720))
-    #         pixmap = MainWindow.imageCv2Qt(img)
-    #         self.videoLabel.setPixmap(pixmap)
-    #         # cv2.imshow('SERVER', img)
-    #         # if cv2.waitKey(1) == 27:
-    #         #     break
-    #     conn.close()
-    #     cv2.destroyAllWindows()
-
-    # def ReceiveVideo(self):
-    #     try:
-    #         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    #         s.bind(('10.106.78.225', 8004))
-    #         s.listen(1)
-        
-    #     except socket.error as msg:
-    #         print(msg)
-    #         sys.exit(1)
-    #     print("Waiting...")
-    #     while True:
-    #         conn, addr = s.accept()
-    #         self.deal_data(conn, addr)
-            
-    # @staticmethod
-    # def imageCv2Qt(image):
-    #     height, width, bytesPerComponent = image.shape
-    #     bytesPerLine = 3 * width
-    #     cv2.cvtColor(image, cv2.COLOR_BGR2RGB, image)
-    #     QImg = QImage(image.data, width, height, bytesPerLine, QImage.Format_RGB888)
-    #     pixmap = QPixmap.fromImage(QImg)
-    #     return pixmap
-        
 if __name__ == "__main__":
     
     QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
