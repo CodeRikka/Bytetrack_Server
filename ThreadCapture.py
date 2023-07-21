@@ -53,8 +53,13 @@ class ThreadCapture(QThread):
             # stringData = conn.recv(data_len)
             # print(stringData)
             data = numpy.frombuffer(stringData, dtype='uint8')
+            
+            print("len(data) = ", len(data))
             tmp = cv2.imdecode(data, cv2.IMREAD_COLOR)  # 解码处理，返回mat图片
             img = cv2.resize(tmp, (1280, 720))
+            
+            print(img.shape)
+            print(img.dtype)
             pixmap = self.imageCv2Qt(img)
             self.signal_image.emit(pixmap)
             self.sendFlag("OK")

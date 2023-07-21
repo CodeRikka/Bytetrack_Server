@@ -1,0 +1,10 @@
+QScrollArea {
+    border: none;
+    background-color: transparent;
+}
+
+#titleLabel {
+    color: black;
+    font: 50px 'Segoe UI', 'Microsoft YaHei';
+    font-weight: bold;
+}

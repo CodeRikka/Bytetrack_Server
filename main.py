@@ -40,6 +40,7 @@ class MainWindow(FramelessWindow, Ui_Form):
     
     
     def submit_Post(self):
+        # 不同设备有不同url，用POST来驱动不同设备
         url = "http://10.105.114.11:25000/export"  # 应用程序的 URL
         
         response = requests.post(url)  # 发送 POST 请求
@@ -56,15 +57,17 @@ class MainWindow(FramelessWindow, Ui_Form):
             self.threadCapture = ThreadCapture()
             self.threadCapture.Threadopen = True
             self.threadCapture.signal_image.connect(self.showImage)
-            self.threadCapture.start()
             self.PushButton.setText(self.closeThreadText)
+            self.threadCapture.start()
         else:
+            self.PushButton.setText(self.openThreadText)
             self.threadCapture.closeThread()
             self.threadCapture.terminate()
             self.threadCapture.quit()
-            self.PushButton.setText(self.openThreadText)
         
     def showImage(self, image):
+        print(image)
+        #<PySide6.QtGui.QPixmap(QSize(1280, 720),depth=32,devicePixelRatio=1,cacheKey=0xb500000000) at 0x0000018B54E36A00>
         self.imageScene.addPixmap(image)
     
 if __name__ == "__main__":
