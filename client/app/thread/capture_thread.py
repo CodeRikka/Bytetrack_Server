@@ -38,7 +38,7 @@ class CaptureThread(QThread):
         if self.img_sock == None:
             try:
                 self.img_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self.img_sock.settimeout(3)
+                # self.img_sock.settimeout(3)
                 # 开启连接
                 print("img socket start")
                 self.img_sock.connect(img_address)
@@ -60,13 +60,14 @@ class CaptureThread(QThread):
         return buf
     
     def run(self):
-        if not self.is_connect:
-            return 
         self.InitSocket()
+        if self.is_connect != True:
+            return 
         
+        print("capture waiting...")
         while self.Threadopen:
             
-            # self.qmutex.lock()
+            self.qmutex.lock()
             image_data_len = None
             while self.Threadopen:
                 buf = self.img_sock.recv(struct.calcsize('I'))
@@ -81,7 +82,7 @@ class CaptureThread(QThread):
             data = numpy.frombuffer(image_data, dtype='uint8')
             tmp = cv2.imdecode(data, cv2.IMREAD_COLOR)  # 解码处理，返回mat图片
             img = cv2.resize(tmp, (1280, 720))
-            # self.qmutex.unlock()
+            self.qmutex.unlock()
             # cv2.imshow("test", img)
             # cv2.imwrite("E://test.jpeg", img)
             buf = self.img_sock.recv(struct.calcsize('I'))

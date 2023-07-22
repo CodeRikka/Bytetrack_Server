@@ -9,3 +9,11 @@ QScrollArea {
     font: 50px 'Segoe UI', 'Microsoft YaHei';
     font-weight: bold;
 }
+
+QGraphicsView {
+    background: transparent;
+    border-style:solid; 
+    border-color: white;				
+	border-width:1px;	 				
+	border-radius:5px;  				
+}

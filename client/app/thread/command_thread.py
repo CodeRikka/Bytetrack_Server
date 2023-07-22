@@ -26,7 +26,7 @@ class CommandThread(QThread):
         cmd_address = (self.ip, self.cmdport)
         try:
             self.cmd_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.cmd_sock.settimeout(3)
+            # self.cmd_sock.settimeout(3)
             # 开启连接
             print("cmd socket start")
             self.cmd_sock.connect(cmd_address)
@@ -54,6 +54,7 @@ class CommandThread(QThread):
             buf += newbuf
             count -= len(newbuf)
         return buf
+
     
     def send_command(self, cmd: str):
         print(cmd)

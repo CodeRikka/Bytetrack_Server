@@ -41,7 +41,7 @@ class CommandThread(QThread):
             
         except (socket.error, socket.timeout) as msg:
             print(msg)
-            # sys.exit(1)
+            sys.exit(1)
     
     def recv_all(self, sock, count):
         buf = b''
@@ -53,5 +53,10 @@ class CommandThread(QThread):
         return buf
     
     def send_command(self, cmd):
-        print(cmd)
-        self.cmd_sock.send(cmd.encode())
+        try:
+            print(cmd)
+            self.cmd_sock.send(cmd.encode())
+        except Exception as e:
+            # Handle the exception here, for example, log the error or display a message box
+            print("CommandThread Error:", e)
+            # You can also emit a signal to notify the main thread about the error and handle it there.

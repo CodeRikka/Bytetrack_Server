@@ -13,7 +13,7 @@ class PlayerInterface(ScrollArea):
         super().__init__(parent)
         self.openThreadText = "Start Thread"
         self.closeThreadText = "Close Thread"
-        
+        self.current_pixmap = None
         self.titleLabel = QLabel('Player', self)
         self.imageScene = QGraphicsScene()
         self.imageView = QGraphicsView(self)
@@ -34,6 +34,8 @@ class PlayerInterface(ScrollArea):
         self.imageView.setFixedHeight(720)
         self.imageView.setFixedWidth(1280)
         # self.imageView.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        self.imageView.setScene(self.imageScene)
         
         self.comboBox.setFixedSize(150, 40)
         self.playButton.setFixedSize(150, 45)   
@@ -81,7 +83,7 @@ class PlayerInterface(ScrollArea):
             self.playButton._postInit()
             return
 
-        if not self.commandThread.isConnect():
+        if self.commandThread.isConnect() != True:
             self.showErrorMessage("未连接到设备!")
             self.playButton._postInit()
             return 
@@ -96,14 +98,14 @@ class PlayerInterface(ScrollArea):
     def connectServer(self, ip):
         self.captureThread = CaptureThread()
         self.captureThread.signal_image.connect(self.showImage)
-        self.captureThread.errorSignal.connect(lambda str: self.showErrorMessage)
+        self.captureThread.errorSignal.connect(self.showErrorMessage)
         self.captureThread.InitPort(ip, 15006)
         self.captureThread.InitSocket()
         self.captureThread.Threadopen = True
         self.captureThread.start()
         
         self.commandThread = CommandThread()
-        self.commandThread.errorSignal.connect(lambda str: self.showErrorMessage)
+        self.commandThread.errorSignal.connect(self.showErrorMessage)
         self.commandThread.InitPort(ip, 15005)
         self.commandThread.InitSocket()
         self.commandThread.Threadopen = True
@@ -112,18 +114,22 @@ class PlayerInterface(ScrollArea):
         
     def cleanupThreads(self):
         if hasattr(self, 'captureThread') and self.captureThread:
-            self.captureThread.stop()
+            # self.captureThread.stop()
             self.captureThread.wait()
             self.captureThread = None
 
         if hasattr(self, 'commandThread') and self.commandThread:
-            self.commandThread.stop()
+            # self.commandThread.stop()
             self.commandThread.wait()
             self.commandThread = None
             
             
     def showImage(self, image):
-        self.imageScene.addPixmap(image)
+        if self.current_pixmap is not None:
+            self.current_pixmap = None  # Release the old QPixmap
+        self.current_pixmap = image
+        self.imageScene.clear()
+        self.imageScene.addPixmap(self.current_pixmap)
         
     @Slot(str)
     def showErrorMessage(self, message):
@@ -136,3 +142,11 @@ class PlayerInterface(ScrollArea):
             duration=2000,
             parent=self
         )
+        
+    def closeEvent(self, event):
+        if self.current_pixmap is not None:
+            self.current_pixmap = None  # Release the QPixmap when closing the window
+        self.captureThread.Threadopen = False
+        self.commandThread.Threadopen = False
+        self.cleanupThreads()
+        event.accept()
