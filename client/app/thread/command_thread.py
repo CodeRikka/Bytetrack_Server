@@ -4,7 +4,7 @@ import struct
 import numpy
 import cv2
 from PySide6.QtCore import Qt, QThread, Signal, QMutex, QMetaObject, Q_ARG
-
+from ..common.model_info import ModelInfo
 import struct
 
 
@@ -38,8 +38,9 @@ class CommandThread(QThread):
             class_len = struct.unpack('I', buf)[0]
             print(class_len)
             SEPERATOR = "\n"
-            class_list = self.cmd_sock.recv(class_len).decode().split(SEPERATOR)
-            print(class_list)
+            ModelInfo.instance().class_list = self.cmd_sock.recv(class_len).decode().split(SEPERATOR)
+            ModelInfo.instance().generate_random_colors()
+            print(ModelInfo.instance().class_list)
             
             
         except (socket.error, socket.timeout) as msg:

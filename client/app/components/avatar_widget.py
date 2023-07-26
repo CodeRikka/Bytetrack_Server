@@ -37,4 +37,4 @@ class AvatarWidget(NavigationWidget):
             font = QFont('Segoe UI')
             font.setPixelSize(14)
             painter.setFont(font)
-            painter.drawText(QRect(44, 0, 255, 36), Qt.AlignVCenter, 'zhiyiYo')
+            painter.drawText(QRect(44, 0, 255, 36), Qt.AlignVCenter, 'User')

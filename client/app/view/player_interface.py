@@ -31,11 +31,13 @@ class PlayerInterface(ScrollArea):
         
     def __initWidget(self):
         StyleSheet.DEVICE_CARD.apply(self)
-        self.imageView.setFixedHeight(720)
+        self.imageView.setFixedHeight(722)
         self.imageView.setFixedWidth(1280)
         # self.imageView.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
         self.imageView.setScene(self.imageScene)
+        self.imageView.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.imageView.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         
         self.comboBox.setFixedSize(150, 40)
         self.playButton.setFixedSize(150, 45)   

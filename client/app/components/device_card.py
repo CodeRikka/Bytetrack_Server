@@ -39,6 +39,7 @@ class DeviceCard(QFrame):
         
         self.editButton.clicked.connect(self.showDeviceDialog)
         self.deleteButton.clicked.connect(self.deleteDevice)
+        self.playButton.clicked.connect(self.on_playButton_clicked)
         self.__initLayout()
     
     def __initLayout(self):
@@ -135,6 +136,10 @@ class DeviceCard(QFrame):
             return
         self.deleteLater()
             
+    def on_playButton_clicked():
+        #Todo
+        return 
+        
             
 class DeviceCardView(QWidget):
     """ Device card view """
